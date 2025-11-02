@@ -1,7 +1,7 @@
 # ============================================================
 # main.py — FastAPI Backend for Gemini Species Chatbot
 # ============================================================
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from google import genai
@@ -9,7 +9,6 @@ import os, json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 from collections import deque
-import uvicorn  # ✅ Import for running locally or Render
 
 # ============================================================
 # ⚙️ FastAPI App
@@ -48,6 +47,10 @@ KB = {
 # ============================================================
 # 🧩 TF-IDF Retriever
 # ============================================================
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
+from collections import deque
+
 animal_texts = [f"{name}. {KB[name]['info']} {KB[name]['health_precautions']} {KB[name]['emotion_signs']}" for name in KB]
 vectorizer = TfidfVectorizer().fit(animal_texts)
 X = vectorizer.transform(animal_texts)
@@ -114,14 +117,9 @@ async def chat(req: ChatRequest):
     return {"reply": reply}
 
 # ============================================================
-# 🚀 Entry Point for Render or Local
+# 🚀 Local Development Entry Point (not for Render)
 # ============================================================
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # ✅ Render sets PORT automatically
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
-
-# ============================================================
-# 🚀 Entry Point for Render
-# ============================================================
-else:
-    uvicorn.run("main:app", host="0.0.0.0", port=5000)
+    import uvicorn
+    port = int(os.environ.get("PORT", 5000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
