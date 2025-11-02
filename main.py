@@ -9,6 +9,7 @@ import os, json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 from collections import deque
+import uvicorn  # ✅ Import for running locally or Render
 
 # ============================================================
 # ⚙️ FastAPI App
@@ -113,5 +114,14 @@ async def chat(req: ChatRequest):
     return {"reply": reply}
 
 # ============================================================
-# 🚀 Run with: uvicorn main:app --host 0.0.0.0 --port 5000
+# 🚀 Entry Point for Render or Local
 # ============================================================
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # ✅ Render sets PORT automatically
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
+
+# ============================================================
+# 🚀 Entry Point for Render
+# ============================================================
+else:
+    uvicorn.run("main:app", host="0.0.0.0", port=5000)
